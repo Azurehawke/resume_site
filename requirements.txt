@@ -1,4 +1,5 @@
 Django==5.0.14
+whitenoise==6.12.0
 django-ckeditor-5==0.2.20
 django-js-asset==4.0.1
 Pillow==12.3.0
