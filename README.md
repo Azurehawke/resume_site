@@ -56,8 +56,9 @@ Visit `http://127.0.0.1:8000/login/` to log into the portal, or
 ## Deploying with Docker (behind Cloudflare Tunnel)
 
 This follows the same pattern as other self-hosted services: a Docker
-container bound to localhost, with `cloudflared` (run separately, same as
-your other tunnels) pointing its ingress at this container.
+container bound to your internal network address, with `cloudflared` (run
+separately, same as your other tunnels) pointing its ingress at this
+container.
 
 ```bash
 cp .env.example .env
@@ -67,9 +68,9 @@ docker compose up -d --build
 docker compose exec web python manage.py createsuperuser
 ```
 
-The container listens on `127.0.0.1:8123` (mapped from its internal port
-8000). Point your Cloudflare Tunnel's ingress rule for this hostname at
-`http://localhost:8123`.
+The container listens on `100.107.227.53:9130` (mapped from its internal
+port 8000). Point your Cloudflare Tunnel's ingress rule for this hostname at
+`http://100.107.227.53:9130`.
 
 Data persists in the `resume_data` Docker volume (SQLite database + uploaded
 media, including your profile photo), so it survives image rebuilds.
