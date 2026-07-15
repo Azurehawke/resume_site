@@ -1,0 +1,52 @@
+{% extends "portal/_base.html" %}
+{% block title %}Dashboard — Resume Portal{% endblock %}
+{% block content %}
+<h1>Welcome{% if profile.full_name %}, {{ profile.full_name }}{% endif %}</h1>
+
+<div class="stat-row">
+  <div class="stat">
+    <div class="stat__value">{{ page_count }}</div>
+    <div class="stat__label">Target pages</div>
+  </div>
+  <div class="stat">
+    <div class="stat__value">{{ section_count }}</div>
+    <div class="stat__label">Active sections</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0;">Content</h2>
+  <p>Job history, education, skills and any other sections live in the content admin — add entries, courses,
+  duties and skills there. Use rich text to control formatting.</p>
+  <div class="btn-row">
+    <a class="btn btn-primary" href="{% url 'admin:core_section_changelist' %}">Manage Sections</a>
+    <a class="btn btn-secondary" href="{% url 'admin:core_profile_changelist' %}">Edit Profile &amp; Photo</a>
+  </div>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0;">Target pages</h2>
+  <p>Each target page is a private link you send to one employer, showing only the content you check off for it.</p>
+  <div class="btn-row" style="margin-bottom:1rem;">
+    <a class="btn btn-primary" href="{% url 'portal:page_create' %}">+ New target page</a>
+    <a class="btn btn-secondary" href="{% url 'portal:page_list' %}">View all</a>
+  </div>
+  {% if pages %}
+  <table>
+    <thead><tr><th>Employer</th><th>Position</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for p in pages %}
+      <tr>
+        <td>{{ p.employer_name }}</td>
+        <td>{{ p.position_title|default:"—" }}</td>
+        <td>{% if p.is_published %}<span class="badge badge-live">Live</span>{% else %}<span class="badge badge-draft">Draft</span>{% endif %}</td>
+        <td><a href="{% url 'portal:page_builder' p.pk %}">Edit</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No target pages yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

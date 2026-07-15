@@ -1,0 +1,32 @@
+{% extends "portal/_base.html" %}
+{% block title %}Target Pages — Resume Portal{% endblock %}
+{% block content %}
+<div class="btn-row" style="justify-content: space-between; margin-bottom: 1.5rem;">
+  <h1 style="margin:0;">Target Pages</h1>
+  <a class="btn btn-primary" href="{% url 'portal:page_create' %}">+ New target page</a>
+</div>
+
+<div class="card">
+  {% if pages %}
+  <table>
+    <thead>
+      <tr><th>Employer</th><th>Position</th><th>Status</th><th>Views</th><th>Created</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for p in pages %}
+      <tr>
+        <td>{{ p.employer_name }}</td>
+        <td>{{ p.position_title|default:"—" }}</td>
+        <td>{% if p.is_published %}<span class="badge badge-live">Live</span>{% else %}<span class="badge badge-draft">Draft</span>{% endif %}</td>
+        <td>{{ p.view_total }}</td>
+        <td>{{ p.created_at|date:"M j, Y" }}</td>
+        <td><a href="{% url 'portal:page_builder' p.pk %}">Edit</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No target pages yet. Create one for the first employer you're applying to.</p>
+  {% endif %}
+</div>
+{% endblock %}

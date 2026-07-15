@@ -1,0 +1,27 @@
+{% if entries %}
+<section class="resume-section">
+  <h2 class="section-title">{{ section.title }}</h2>
+  {% if section.intro_text %}<div class="text-block" style="margin-bottom:1rem;">{{ section.intro_text|safe }}</div>{% endif %}
+  {% for item in entries %}
+  <details class="entry-card card">
+    <summary>
+      <div>
+        <span class="entry-card__toggle"></span>
+        <span class="entry-card__heading">{{ item.entry.heading }}</span>
+        {% if item.entry.subheading %}<span class="entry-card__sub">— {{ item.entry.subheading }}</span>{% endif %}
+      </div>
+      <span class="entry-card__dates">{{ item.entry.date_range_display }}</span>
+    </summary>
+    {% if item.entry.location %}<div class="entry-card__location">{{ item.entry.location }}</div>{% endif %}
+    {% if item.entry.summary %}<p class="entry-card__summary">{{ item.entry.summary }}</p>{% endif %}
+    {% if item.details %}
+    <div class="entry-card__body">
+      <ul>
+        {% for d in item.details %}<li>{{ d.content|safe }}</li>{% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </details>
+  {% endfor %}
+</section>
+{% endif %}

@@ -1,0 +1,6 @@
+Django==5.0.14
+django-ckeditor-5==0.2.20
+django-js-asset==4.0.1
+Pillow==12.3.0
+weasyprint==69.0
+gunicorn==26.0.0

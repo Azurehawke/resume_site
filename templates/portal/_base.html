@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block body %}
+<nav class="portal-nav">
+  <div class="portal-nav__inner">
+    <a class="portal-nav__brand" href="{% url 'portal:dashboard' %}">Resume Portal</a>
+    {% if user.is_authenticated %}
+    <div class="portal-nav__links">
+      <a href="{% url 'portal:dashboard' %}">Dashboard</a>
+      <a href="{% url 'portal:page_list' %}">Target Pages</a>
+      <a href="{% url 'portal:analytics_list' %}">Analytics</a>
+      <a href="{% url 'admin:index' %}">Content Admin</a>
+      <a href="{% url 'portal:logout' %}">Log out</a>
+    </div>
+    {% endif %}
+  </div>
+</nav>
+<div class="page page--wide">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+  {% block content %}{% endblock %}
+</div>
+{% endblock %}

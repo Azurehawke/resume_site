@@ -1,0 +1,16 @@
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - resume_data:/data
+    # Bind to localhost only — point your cloudflared tunnel's ingress at
+    # http://localhost:8123, the same pattern as your other self-hosted
+    # services. Nothing here is exposed directly to the internet.
+    ports:
+      - "127.0.0.1:8123:8000"
+
+volumes:
+  resume_data:

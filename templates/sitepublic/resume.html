@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ profile.full_name }}{% if page.position_title %} — {{ page.position_title }}{% endif %}{% endblock %}
+{% block content %}
+{% if is_preview %}
+<div class="alert alert-info">
+  Preview mode — you're viewing this as the owner. Visits while logged in aren't counted in analytics.
+  {% if not page.is_published %}This page is currently a <strong>draft</strong> and won't be reachable by anyone else until you publish it.{% endif %}
+</div>
+{% endif %}
+
+<header class="resume-header">
+  {% if profile.photo %}
+    <img class="resume-photo" src="{{ profile.photo.url }}" alt="{{ profile.full_name }}">
+  {% else %}
+    <div class="resume-photo resume-photo--placeholder">{{ profile.full_name|slice:":1" }}</div>
+  {% endif %}
+  <div>
+    <h1>{{ profile.full_name }}</h1>
+    {% if profile.headline %}<p class="resume-headline">{{ profile.headline }}</p>{% endif %}
+    <div class="resume-contact">
+      {% if profile.email %}<span><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></span>{% endif %}
+      {% if profile.phone %}<span>{{ profile.phone }}</span>{% endif %}
+      {% if profile.location %}<span>{{ profile.location }}</span>{% endif %}
+      {% for link in profile.links.all %}<span><a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.label }}</a></span>{% endfor %}
+    </div>
+  </div>
+</header>
+
+{% if profile.summary %}<div class="resume-summary">{{ profile.summary|safe }}</div>{% endif %}
+
+{% for item in sections %}
+  {% if item.section.layout == "timeline" %}
+    {% include "sitepublic/_section_timeline.html" with section=item.section entries=item.entries %}
+  {% elif item.section.layout == "skills" %}
+    {% include "sitepublic/_section_skills.html" with section=item.section entries=item.entries %}
+  {% else %}
+    {% include "sitepublic/_section_text.html" with section=item.section %}
+  {% endif %}
+{% endfor %}
+
+<div class="resume-footer">Last updated {{ page.updated_at|date:"F Y" }}</div>
+{% endblock %}

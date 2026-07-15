@@ -1,0 +1,16 @@
+{% if entries %}
+<section class="resume-section card">
+  <h2 class="section-title">{{ section.title }}</h2>
+  {% if section.intro_text %}<div class="text-block" style="margin-bottom:1rem;">{{ section.intro_text|safe }}</div>{% endif %}
+  {% for item in entries %}
+    {% if item.details %}
+    <div class="skills-category">
+      <div class="skills-category__title">{{ item.entry.heading }}</div>
+      <div class="skills-tags">
+        {% for d in item.details %}<span class="skills-tag">{{ d.content|striptags }}</span>{% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  {% endfor %}
+</section>
+{% endif %}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ profile.full_name }} — Resume</title>
+<style>
+  @page { size: Letter; margin: 2cm 1.8cm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: #1f2933; font-size: 10.5pt; line-height: 1.45; }
+  .header { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+  .photo { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; }
+  h1 { font-size: 19pt; margin: 0 0 2px; color: #1d3557; }
+  .headline { color: #64748b; font-size: 11pt; margin: 0 0 6px; }
+  .contact { font-size: 9pt; color: #64748b; }
+  .contact span:not(:last-child)::after { content: " · "; }
+  .summary { margin-bottom: 16px; }
+  h2 { font-size: 12.5pt; color: #1d3557; border-bottom: 1.5pt solid #eef2ff; padding-bottom: 3px; margin: 18px 0 8px; }
+  .entry { margin-bottom: 10px; page-break-inside: avoid; }
+  .entry-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .entry-heading { font-weight: 700; }
+  .entry-sub { color: #64748b; font-weight: 400; }
+  .entry-dates { color: #64748b; font-size: 9pt; white-space: nowrap; }
+  .entry-location { color: #64748b; font-size: 8.5pt; }
+  .entry-summary { color: #475569; margin: 2px 0 0; }
+  ul { margin: 4px 0 0; padding-left: 16px; }
+  li { margin-bottom: 2px; }
+  .skills-category { margin-bottom: 8px; }
+  .skills-category__title { font-weight: 700; margin-bottom: 3px; }
+  .skills-tags span { display: inline-block; background: #eef2ff; color: #1d3557; border-radius: 999px; padding: 2px 9px; font-size: 8.5pt; margin: 0 4px 4px 0; }
+</style>
+</head>
+<body>
+  <div class="header">
+    {% if photo_data_uri %}<img class="photo" src="{{ photo_data_uri }}" alt="">{% endif %}
+    <div>
+      <h1>{{ profile.full_name }}</h1>
+      {% if profile.headline %}<p class="headline">{{ profile.headline }}</p>{% endif %}
+      <div class="contact">
+        {% if profile.email %}<span>{{ profile.email }}</span>{% endif %}
+        {% if profile.phone %}<span>{{ profile.phone }}</span>{% endif %}
+        {% if profile.location %}<span>{{ profile.location }}</span>{% endif %}
+        {% for link in profile.links.all %}<span>{{ link.label }}: {{ link.url }}</span>{% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {% if profile.summary %}<div class="summary">{{ profile.summary|safe }}</div>{% endif %}
+
+  {% for item in sections %}
+    {% if item.section.layout == "timeline" and item.entries %}
+      <h2>{{ item.section.title }}</h2>
+      {% for e in item.entries %}
+      <div class="entry">
+        <div class="entry-row">
+          <span><span class="entry-heading">{{ e.entry.heading }}</span>{% if e.entry.subheading %} <span class="entry-sub">— {{ e.entry.subheading }}</span>{% endif %}</span>
+          <span class="entry-dates">{{ e.entry.date_range_display }}</span>
+        </div>
+        {% if e.entry.location %}<div class="entry-location">{{ e.entry.location }}</div>{% endif %}
+        {% if e.entry.summary %}<p class="entry-summary">{{ e.entry.summary }}</p>{% endif %}
+        {% if e.details %}<ul>{% for d in e.details %}<li>{{ d.content|safe }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+      {% endfor %}
+    {% elif item.section.layout == "skills" and item.entries %}
+      <h2>{{ item.section.title }}</h2>
+      {% for e in item.entries %}
+        {% if e.details %}
+        <div class="skills-category">
+          <div class="skills-category__title">{{ e.entry.heading }}</div>
+          <div class="skills-tags">{% for d in e.details %}<span>{{ d.content|striptags }}</span>{% endfor %}</div>
+        </div>
+        {% endif %}
+      {% endfor %}
+    {% elif item.section.layout == "text" and item.section.intro_text %}
+      <h2>{{ item.section.title }}</h2>
+      <div>{{ item.section.intro_text|safe }}</div>
+    {% endif %}
+  {% endfor %}
+</body>
+</html>

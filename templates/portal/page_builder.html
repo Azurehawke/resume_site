@@ -1,0 +1,88 @@
+{% extends "portal/_base.html" %}
+{% load static %}
+{% block title %}{{ page.employer_name }} — Resume Portal{% endblock %}
+{% block content %}
+<div class="btn-row" style="justify-content: space-between; margin-bottom: 0.5rem;">
+  <h1 style="margin:0;">{{ page.employer_name }}{% if page.position_title %} — {{ page.position_title }}{% endif %}</h1>
+  <div class="btn-row">
+    <a class="btn btn-secondary" href="{{ page.get_absolute_url }}" target="_blank" rel="noopener">Preview public page</a>
+    <a class="btn btn-secondary" href="{% url 'portal:page_pdf' page.pk %}">Download PDF</a>
+  </div>
+</div>
+<p style="color: var(--color-muted); margin-top:0;">
+  Private link: <code>{{ request.scheme }}://{{ request.get_host }}{{ page.get_absolute_url }}</code>
+</p>
+
+<div class="card">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <div style="display:flex; gap:1.5rem; flex-wrap:wrap; margin-bottom:1.25rem;">
+      <div class="form-field" style="flex:1 1 220px; margin-bottom:0;">
+        <label for="id_employer_name">Employer</label>
+        {{ form.employer_name }}
+      </div>
+      <div class="form-field" style="flex:1 1 220px; margin-bottom:0;">
+        <label for="id_position_title">Position</label>
+        {{ form.position_title }}
+      </div>
+      <div class="form-field checkbox-field" style="flex:0 0 auto; align-self:flex-end;">
+        {{ form.is_published }}
+        <label for="id_is_published">Published (live to the public)</label>
+      </div>
+    </div>
+
+    <h2 style="font-size:1.05rem;">Choose what this page shows</h2>
+    <p style="color: var(--color-muted); font-size:0.88rem;">
+      Check a section, entry, or individual bullet to include it. Checking a section or entry auto-checks
+      everything under it — you can then uncheck individual items.
+    </p>
+
+    {% for section in sections %}
+    <details class="builder-section" open>
+      <summary>
+        <input type="checkbox" name="sections" value="{{ section.id }}"
+               {% if section.id in selected_sections %}checked{% endif %}>
+        {{ section.title }}
+        <span class="builder-entry__meta">({{ section.get_layout_display }})</span>
+      </summary>
+
+      {% for entry in section.entries.all %}
+      <details class="builder-entry" open>
+        <summary>
+          <input type="checkbox" name="entries" value="{{ entry.id }}"
+                 {% if entry.id in selected_entries %}checked{% endif %}>
+          {{ entry.heading }}
+          {% if entry.subheading %}<span class="builder-entry__meta">— {{ entry.subheading }}</span>{% endif %}
+          {% if entry.date_range_display %}<span class="builder-entry__meta">{{ entry.date_range_display }}</span>{% endif %}
+        </summary>
+        {% for detail in entry.details.all %}
+        <div class="builder-detail">
+          <input type="checkbox" name="details" value="{{ detail.id }}"
+                 {% if detail.id in selected_details %}checked{% endif %}>
+          <span>{{ detail.content|striptags }}</span>
+        </div>
+        {% empty %}
+        <p class="builder-entry__meta" style="margin-left:1.6rem;">No bullets added yet — add some in the content admin.</p>
+        {% endfor %}
+      </details>
+      {% empty %}
+      <p class="builder-entry__meta" style="margin-left:1.6rem;">No entries in this section yet.</p>
+      {% endfor %}
+    </details>
+    {% empty %}
+    <p>No active sections yet. Add one in the content admin first.</p>
+    {% endfor %}
+
+    <div class="btn-row" style="margin-top:1.5rem;">
+      <button type="submit" class="btn btn-primary">Save selections</button>
+      <a class="btn btn-secondary" href="{% url 'portal:page_list' %}">Back to list</a>
+      <a class="btn btn-danger" href="#" onclick="if(confirm('Delete this target page? This cannot be undone.')){document.getElementById('delete-form').submit();} return false;">Delete page</a>
+    </div>
+  </form>
+  <form id="delete-form" method="post" action="{% url 'portal:page_delete' page.pk %}" style="display:none;">
+    {% csrf_token %}
+  </form>
+</div>
+
+<script src="{% static 'js/builder.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "portal/_base.html" %}
+{% block title %}New Target Page — Resume Portal{% endblock %}
+{% block content %}
+<h1>New target page</h1>
+<p style="color: var(--color-muted);">Give it a name so you remember what it's for. You'll pick which content to show next.</p>
+<div class="card" style="max-width: 520px;">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-field">
+      <label for="id_employer_name">Employer</label>
+      {{ form.employer_name }}
+      {% for error in form.employer_name.errors %}<div class="errorlist">{{ error }}</div>{% endfor %}
+    </div>
+    <div class="form-field">
+      <label for="id_position_title">Position</label>
+      {{ form.position_title }}
+    </div>
+    <div class="form-field">
+      <label for="id_notes">Private notes (never shown publicly)</label>
+      {{ form.notes }}
+    </div>
+    <button type="submit" class="btn btn-primary">Create &amp; choose content</button>
+  </form>
+</div>
+{% endblock %}

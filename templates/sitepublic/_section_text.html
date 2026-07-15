@@ -1,0 +1,6 @@
+{% if section.intro_text %}
+<section class="resume-section card text-block">
+  <h2 class="section-title">{{ section.title }}</h2>
+  {{ section.intro_text|safe }}
+</section>
+{% endif %}

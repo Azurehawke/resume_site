@@ -1,0 +1,32 @@
+{% extends "portal/_base.html" %}
+{% block title %}{{ page.employer_name }} analytics — Resume Portal{% endblock %}
+{% block content %}
+<h1>{{ page.employer_name }}{% if page.position_title %} — {{ page.position_title }}{% endif %}</h1>
+
+<div class="stat-row">
+  <div class="stat">
+    <div class="stat__value">{{ total }}</div>
+    <div class="stat__label">Total views</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0;">Recent visits</h2>
+  {% if views %}
+  <table>
+    <thead><tr><th>When</th><th>IP</th><th>Referrer</th></tr></thead>
+    <tbody>
+      {% for v in views %}
+      <tr>
+        <td>{{ v.viewed_at|date:"M j, Y H:i" }}</td>
+        <td>{{ v.ip_address|default:"—" }}</td>
+        <td>{{ v.referrer|default:"—"|truncatechars:60 }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No visits recorded yet. Views from you while logged in aren't counted.</p>
+  {% endif %}
+</div>
+{% endblock %}
