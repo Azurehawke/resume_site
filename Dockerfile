@@ -36,4 +36,8 @@ COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+# This is a single-user, low-traffic site — default to 2 workers to keep
+# the memory footprint modest (each worker fully loads Django, Pillow, and
+# on first PDF export, WeasyPrint's Pango/Cairo stack). Override with the
+# GUNICORN_WORKERS env var if your hardware can spare more, or needs fewer.
+CMD gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers ${GUNICORN_WORKERS:-2}
