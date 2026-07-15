@@ -122,9 +122,13 @@ LOGIN_URL = "portal:login"
 LOGIN_REDIRECT_URL = "portal:dashboard"
 LOGOUT_REDIRECT_URL = "portal:login"
 
-# Cookies should only ever travel over the Cloudflare-terminated HTTPS connection.
-SESSION_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_SECURE = not DEBUG
+# Cookies should only ever travel over the Cloudflare-terminated HTTPS
+# connection. Defaults to on whenever DEBUG is off, but can be forced off
+# independently — e.g. to test directly over plain HTTP before Cloudflare
+# Tunnel is wired up to this host.
+COOKIE_SECURE = env_bool("DJANGO_COOKIE_SECURE", default=not DEBUG)
+SESSION_COOKIE_SECURE = COOKIE_SECURE
+CSRF_COOKIE_SECURE = COOKIE_SECURE
 
 # CKEditor 5 (rich text editor used throughout the portal for job duties,
 # course descriptions, and other formatted content)
